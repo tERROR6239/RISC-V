@@ -396,7 +396,7 @@ m4+definitions(['
          siggen_mnemonic = () => {
             let instrs = ["lui", "auipc", "jal", "jalr", "beq", "bne", "blt", "bge", "bltu", "bgeu", "lb", "lh", "lw", "lbu", "lhu", "sb", "sh", "sw", "addi", "slti", "sltiu", "xori", "ori", "andi", "slli", "srli", "srai", "add", "sub", "sll", "slt", "sltu", "xor", "srl", "sra", "or", "and", "csrrw", "csrrs", "csrrc", "csrrwi", "csrrsi", "csrrci", "load", "s_instr"];
             for(i=0;i<instrs.length;i++) {
-               var sig = this.svSigRef(`L0_is_${instrs[i]}_a0`)
+               var sig = this.svSigRef(`L0_${instrs[i]}_a0`)
                if(sig != null && sig.asBool(false)) {
                   return instrs[i].toUpperCase()
                }
