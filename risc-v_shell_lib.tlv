@@ -154,7 +154,7 @@ m4+definitions(['
             let rf_rd_en2 = siggen(`L0_rf1_rd_en2_a0`)
             let rf_rd_index2 = siggen(`L0_rf1_rd_index2_a0`)
             let wr = siggen(`L1_Xreg[${this.getIndex()}].L1_wr_a0`)
-            let value = siggen(`Xreg_value_a0(${this.getIndex()})`)
+            let value = siggen(`Xreg_value_a0[${this.getIndex()}]`)
             
             let rd = (rf_rd_en1.asBool(false) && rf_rd_index1.asInt() == this.getIndex()) || 
                      (rf_rd_en2.asBool(false) && rf_rd_index2.asInt() == this.getIndex())
@@ -211,7 +211,7 @@ m4+definitions(['
             let dmem_addr = siggen(`L0_dmem1_addr_a0`);
             //
             let wr = siggen(`L1_Dmem[${this.getIndex()}].L1_wr_a0`);
-            let value = siggen(`Dmem_value_a0(${this.getIndex()})`);
+            let value = siggen(`Dmem_value_a0[${this.getIndex()}]`);
             //
             let rd = dmem_rd_en.asBool() && dmem_addr.asInt() == this.getIndex();
             let mod = wr.asBool(false);
@@ -538,7 +538,7 @@ m4+definitions(['
          
          // Animate fetch (and provide onChange behavior for other animation).
          
-         let fetch_instr_str = siggen(`instr_strs(${pc.asInt() >> 2})`, `instr_strs(${pc.asInt() >> 2})`).asString("(?) UNKNOWN fetch instr").substr(4)
+         let fetch_instr_str = siggen(`instr_strs[${pc.asInt() >> 2}]`, `instr_strs[${pc.asInt() >> 2}]`).asString("(?) UNKNOWN fetch instr").substr(4)
          let fetch_instr_viz = new fabric.Text(fetch_instr_str, {
             top: M4_IMEM_TOP + 18 * (pc.asInt() >> 2),
             left: -352 + 8 * 4,
@@ -699,12 +699,20 @@ m4+definitions(['
            return {binary, disassembled}
          },
          onTraceData() {
-            let instr = this.svSigRef(`instrs(${this.getIndex()})`)
+            let instr = this.svSigRef(`instrs[${this.getIndex()}]`)
+            if (!instr) {
+               // Previously, Verilator used (), not []. This should no longer be needed, but, just in case:
+               instr = this.svSigRef(`instrs(${this.getIndex()})`)
+            }
             if (instr) {
                let binary_str = instr.goToSimStart().asBinaryStr("")
                this.getObjects().binary.set({text: binary_str})
             }
-            let disassembled = this.svSigRef(`instr_strs(${this.getIndex()})`)
+            let disassembled = this.svSigRef(`instr_strs[${this.getIndex()}]`)
+            if (!disassembled) {
+               // Previously, Verilator used (), not []. This should no longer be needed, but, just in case:
+               disassembled = this.svSigRef(`instr_strs(${this.getIndex()})`)
+            }
             if (disassembled) {
                let disassembled_str = disassembled.goToSimStart().asString("")
                disassembled_str = disassembled_str.slice(0, -5)
