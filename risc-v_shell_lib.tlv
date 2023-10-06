@@ -406,7 +406,7 @@ m4+definitions(['
          
          let pc            =   siggen("pc")
          let instr         =   siggen("instr")
-         let types = {I: siggen("is_i_instr"),
+         let types = {I: siggen("i_instr"),
                       R: siggen("is_r_instr"),
                       S: siggen("is_s_instr"),
                       B: siggen("is_b_instr"),
